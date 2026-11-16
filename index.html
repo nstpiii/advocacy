@@ -757,10 +757,12 @@
     /* ==========================================================================
        SECTION 5: ADVOCACY MEMBERS (#members)
        ========================================================================== */
-    /* Minimum height of one full screen gives the page enough room below this
-       section so the #members link can scroll it to the top, like the others */
-    #members {
-      min-height: 100vh;
+    /* Only when the #members link is used (the :target state), the bottom padding
+       grows just enough for the browser to scroll this section to the top. The
+       footer's height and the 84px scroll offset are subtracted. Normal scrolling
+       has no extra space. */
+    #members:target {
+      padding-bottom: max(3.25rem, calc(100vh - 320px));
     }
 
     .members-grid {
