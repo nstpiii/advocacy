@@ -756,30 +756,24 @@
 
     /* ==========================================================================
        SECTION 5: ADVOCACY MEMBERS (#members)
+       Members are shown in one column with roomy cards, so the section is tall
+       enough for the #members jump to reach the top without any extra spacing.
        ========================================================================== */
-    /* Only when the #members link is used (the :target state), the bottom padding
-       grows just enough for the browser to scroll this section to the top. The
-       footer's height and the 84px scroll offset are subtracted. Normal scrolling
-       has no extra space. */
-    #members:target {
-      padding-bottom: max(3.25rem, calc(100vh - 320px));
-    }
-
     .members-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
       list-style: none;
     }
 
     .member-card {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.25rem;
       background-color: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-md);
-      padding: 1.25rem 1.35rem;
+      padding: 1.9rem 2.25rem;
       box-shadow: var(--shadow-sm);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
@@ -791,13 +785,13 @@
 
     .member-avatar {
       flex-shrink: 0;
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
       color: var(--color-accent);
       font-family: var(--font-serif);
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -810,7 +804,7 @@
     }
 
     .member-name {
-      font-size: 1rem;
+      font-size: 1.08rem;
       font-weight: 600;
       color: var(--color-ink);
       line-height: 1.35;
@@ -819,7 +813,7 @@
 
     .member-role {
       display: block;
-      margin-top: 0.2rem;
+      margin-top: 0.3rem;
       font-size: 0.78rem;
       font-weight: 700;
       text-transform: uppercase;
@@ -1080,9 +1074,9 @@
         white-space: normal;
       }
 
-      /* Members grid on phones: single column */
-      .members-grid {
-        grid-template-columns: 1fr;
+      /* Member cards on phones: slightly tighter padding */
+      .member-card {
+        padding: 1.5rem 1.5rem;
       }
 
       /* Footer */
