@@ -153,7 +153,7 @@
       color: var(--color-ink);
       white-space: nowrap;
       border-radius: 0;
-      transition: background-color 0.12s ease, color 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease;
+      transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
     }
 
     /* Hover only on devices with a mouse, so touch taps don't leave a link highlighted */
@@ -164,8 +164,9 @@
       }
     }
 
-    /* Pressed state: shows only while the mouse button or finger is held down */
-    .nav-links a:active {
+    /* Press feedback: applied by JavaScript for a short, fixed time so it is
+       visible on quick taps and then fades out smoothly */
+    .nav-links a.is-pressed {
       background-color: var(--color-sage-border);
       color: var(--color-primary);
       transform: translateY(1px);
@@ -1513,6 +1514,38 @@
     var menuToggle = document.getElementById('menu-toggle');
     var navLinks = document.getElementById('nav-links');
 
+    // Minimum time (ms) the press highlight stays visible, so quick taps
+    // don't produce a flash that disappears before it can be seen.
+    var PRESS_MIN_MS = 450;
+
+    function releasePressed(link) {
+      var elapsed = Date.now() - (link._pressStart || 0);
+      var remaining = Math.max(0, PRESS_MIN_MS - elapsed);
+      clearTimeout(link._pressTimer);
+      link._pressTimer = setTimeout(function () {
+        link.classList.remove('is-pressed');
+      }, remaining);
+    }
+
+    // Show the press highlight as soon as the link is touched or clicked
+    navLinks.addEventListener('pointerdown', function (event) {
+      var link = event.target.closest('a');
+      if (!link) return;
+      clearTimeout(link._pressTimer);
+      link._pressStart = Date.now();
+      link.classList.add('is-pressed');
+    });
+
+    // Keep the highlight visible for the minimum time after release or cancel
+    function releaseAll() {
+      var pressed = navLinks.querySelectorAll('a.is-pressed');
+      for (var i = 0; i < pressed.length; i++) {
+        releasePressed(pressed[i]);
+      }
+    }
+    document.addEventListener('pointerup', releaseAll);
+    document.addEventListener('pointercancel', releaseAll);
+
     menuToggle.addEventListener('click', function () {
       var isOpen = header.classList.toggle('is-open');
       menuToggle.setAttribute('aria-expanded', String(isOpen));
@@ -1522,8 +1555,9 @@
     // After a link is tapped: release keyboard focus so no highlight lingers,
     // and close the mobile menu so the section is visible.
     navLinks.addEventListener('click', function (event) {
-      if (event.target.tagName === 'A') {
-        event.target.blur();
+      var link = event.target.closest('a');
+      if (link) {
+        link.blur();
         header.classList.remove('is-open');
         menuToggle.setAttribute('aria-expanded', 'false');
         menuToggle.setAttribute('aria-label', 'Open menu');
