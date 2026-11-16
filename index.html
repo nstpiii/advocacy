@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kaagapay sa Pag-Aaral — Community Education Advocacy</title>
   <style>
+    /* ==========================================================================
+       DESIGN TOKENS & SYSTEM FONT STACKS (Zero External APIs)
+       ========================================================================== */
     :root {
       /* Deep Navy, Champagne Gold & Warm Alabaster Palette (Reference UI) */
       --color-primary: #0D1F2D;        /* Primary Deep Navy */
@@ -150,11 +153,10 @@
       color: var(--color-ink);
       white-space: nowrap;
       border-radius: 0;
-      border-bottom: 2px solid transparent;
-      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      transition: background-color 0.12s ease, color 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease;
     }
 
-    /* Hover preview: only on devices that truly hover (not touch taps) */
+    /* Hover only on devices with a mouse, so touch taps don't leave a link highlighted */
     @media (hover: hover) {
       .nav-links a:hover {
         background-color: var(--color-sage-bg);
@@ -162,17 +164,12 @@
       }
     }
 
-    /* Keyboard focus ring only; no persistent fill */
-    .nav-links a:focus-visible {
-      outline: 2px solid var(--color-accent);
-      outline-offset: -2px;
-    }
-
-    /* Active section (scroll-spy): the only persistent highlight */
-    .nav-links a.is-active {
-      background-color: var(--color-sage-bg);
+    /* Pressed state: shows only while the mouse button or finger is held down */
+    .nav-links a:active {
+      background-color: var(--color-sage-border);
       color: var(--color-primary);
-      border-bottom-color: var(--color-accent);
+      transform: translateY(1px);
+      box-shadow: inset 0 -2px 0 var(--color-accent);
     }
 
     /* Hamburger button (hidden on desktop) */
@@ -953,13 +950,6 @@
         display: block;
         padding: 0.85rem 1rem;
         font-size: 1rem;
-        border-bottom: none;
-      }
-
-      /* On mobile, the active section gets a gold edge instead of an underline */
-      .nav-links a.is-active {
-        border-left: 3px solid var(--color-accent);
-        padding-left: calc(1rem - 3px);
       }
 
       section[id] {
@@ -1118,7 +1108,6 @@
        STICKY NAVIGATION BAR
        - Far Left: Heading tag logo ("Branding") easily modifiable in HTML
        - Far Right: Flexbox nav links on desktop, hamburger menu on mobile
-       - Active link is set by the scroll-spy script at the bottom of the page
        ======================================================================== -->
   <header class="site-header">
     <div class="container navbar">
@@ -1519,84 +1508,27 @@
   </footer>
 
   <script>
+    // Mobile navigation: toggle the hamburger menu open and closed.
     var header = document.querySelector('.site-header');
     var menuToggle = document.getElementById('menu-toggle');
     var navLinks = document.getElementById('nav-links');
-    var navAnchors = navLinks.querySelectorAll('a');
 
-    // ---------------------------------------------------------------------
-    // Mobile navigation: toggle the hamburger menu open and closed.
-    // ---------------------------------------------------------------------
     menuToggle.addEventListener('click', function () {
       var isOpen = header.classList.toggle('is-open');
       menuToggle.setAttribute('aria-expanded', String(isOpen));
       menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
     });
 
-    // Close the menu after a link is tapped so the section is visible.
+    // After a link is tapped: release keyboard focus so no highlight lingers,
+    // and close the mobile menu so the section is visible.
     navLinks.addEventListener('click', function (event) {
       if (event.target.tagName === 'A') {
+        event.target.blur();
         header.classList.remove('is-open');
         menuToggle.setAttribute('aria-expanded', 'false');
         menuToggle.setAttribute('aria-label', 'Open menu');
       }
     });
-
-    // ---------------------------------------------------------------------
-    // Scroll-spy: highlight only the nav link for the section in view.
-    // ---------------------------------------------------------------------
-    var sectionIds = ['mission', 'pillars', 'community', 'action-plan', 'members'];
-    var sections = sectionIds
-      .map(function (id) { return document.getElementById(id); })
-      .filter(Boolean);
-
-    function setActiveLink(id) {
-      navAnchors.forEach(function (link) {
-        var isActive = link.getAttribute('href') === '#' + id;
-        link.classList.toggle('is-active', isActive);
-        if (isActive) {
-          link.setAttribute('aria-current', 'location');
-        } else {
-          link.removeAttribute('aria-current');
-        }
-      });
-    }
-
-    function updateActiveSection() {
-      // A section counts as "current" once its top has passed just below the sticky header.
-      var trigger = header.offsetHeight + 40;
-      var currentId = null;
-
-      sections.forEach(function (section) {
-        if (section.getBoundingClientRect().top <= trigger) {
-          currentId = section.id;
-        }
-      });
-
-      // Near the bottom of the page, the last section stays active even if it is short.
-      var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
-      if (atBottom && sections.length) {
-        currentId = sections[sections.length - 1].id;
-      }
-
-      // Above the first section (e.g. the hero), no link is active.
-      setActiveLink(currentId);
-    }
-
-    var ticking = false;
-    window.addEventListener('scroll', function () {
-      if (!ticking) {
-        window.requestAnimationFrame(function () {
-          updateActiveSection();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
-
-    window.addEventListener('resize', updateActiveSection);
-    window.addEventListener('load', updateActiveSection);
-    updateActiveSection();
   </script>
 
 </body>
