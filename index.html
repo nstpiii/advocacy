@@ -87,7 +87,7 @@
       justify-content: space-between;
       align-items: center;
       min-height: 76px;
-      gap: 2rem;
+      gap: 1.5rem;
     }
 
     .brand-logo {
@@ -134,7 +134,7 @@
     .nav-links a {
       position: relative;
       display: inline-block;
-      padding: 0.55rem 0.7rem;
+      padding: 0.55rem 0.6rem;
       font-size: 0.9rem;
       font-weight: 600;
       line-height: 1.3;
@@ -148,8 +148,8 @@
     .nav-links a::after {
       content: "";
       position: absolute;
-      left: 0.7rem;
-      right: 0.7rem;
+      left: 0.6rem;
+      right: 0.6rem;
       bottom: 0.2rem;
       height: 2px;
       border-radius: 2px;
@@ -1088,10 +1088,11 @@
 
     /* ==========================================================================
        LARGE DESKTOP (1440px and up)
+       The container is widened so the full desktop menu fits without clipping.
        ========================================================================== */
     @media (min-width: 1440px) {
       :root {
-        --max-width: 1280px;
+        --max-width: 1520px;
         --gutter: 2rem;
       }
       .hero-title { font-size: 4rem; }
@@ -1099,9 +1100,11 @@
     }
 
     /* ==========================================================================
-       NAVBAR COLLAPSE (below desktop nav width)
+       NAVBAR COLLAPSE
+       The full nav needs roughly 1,450px of room, so the hamburger menu takes
+       over at 1600px and below. This prevents the last links from being cut off.
        ========================================================================== */
-    @media (max-width: 1160px) {
+    @media (max-width: 1600px) {
       .menu-toggle { display: flex; }
 
       .nav-links {
